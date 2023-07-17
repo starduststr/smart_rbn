@@ -19,7 +19,7 @@
     <div class="pb-3">
         <h5 class="color-black font-weight-bold text-capitalize">daftar ulasan</h5>
         <div id="render-content" style="display: none;">
-
+        
         </div>
         <div id="loading-content" style="display: none;">
             <a class="color-black font-weight-bold">Terdapat <span class="text-white">...</span> Ulasan!</a>
@@ -31,6 +31,7 @@
                     </div>
                 </a>
             </div>
+
         </div>
     </div>
     <hr class="bg-white">
@@ -131,8 +132,16 @@
                     <p class="text-dark text-uppercase text-dark pt-3">${content.name}</p>
                     </div>
                 </a>
+                
             </div>
             `
+
+            if (content.file_materi) {
+                let downloadUrl = "{{ url('/download-materi/') }}" + "?fileName=" + encodeURIComponent(content.file_materi);
+                html += `<a href="${downloadUrl}" class="btn btn-primary mt-2" >Download Materi</a>`;
+            }
+
+
             menuContent += `
             <a href="{{url('/student/subject/${subject.id}/course/${course.id}/topic/${topic.id}/content/${content.id}')}}" class="text-capitalize"><span>${content.name}</span></a>
             `
