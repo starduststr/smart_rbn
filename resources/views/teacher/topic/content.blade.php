@@ -41,6 +41,7 @@
             <div class="form-group mb-3">
                <label for="file">File Materi (optional)</label>
                <input type="file" class="form-control" id="file" name="file_materi">
+               <a href="{{route('file.download.materi')}}" id="file_materi_download">Download</a>
            </div>
             <textarea id="editor" name="content"></textarea>
         </form>
@@ -190,6 +191,18 @@
       });
    }
 
+   function toggleDownloadLink(visible) {
+        if (visible) {
+            $('#file_materi_download').show();
+        } else {
+            $('#file_materi_download').hide();
+        }
+    }
+
+   function setDownloadLinkUrl(url) {
+       $('#file_materi_download').attr('href', url);
+   }
+
    function renderContent(data) {
       if (data.status === 'DRAFT') {
          $('#btn-save').prop('disabled', false);
@@ -207,6 +220,14 @@
          editor.isReadOnly = true;
       }
 
+      if(data.file_materi){
+         toggleDownloadLink(true)
+      } else {
+         toggleDownloadLink(false)
+      }
+
+      setDownloadLinkUrl("{{route('file.download.materi')}}?fileName=" + data.file_materi)
+
       $('input[type=text][name=title]').val(data.name);
       $('input[type=number][name=estimation]').val(data.estimation);
       $('input[type=number][name=activity_exp]').val(data.experience);
@@ -217,55 +238,60 @@
       let title = $('input[type=text][name=title]').val();
       let estimation = $('input[type=number][name=estimation]').val();
       let experience = $('input[type=number][name=activity_exp]').val();
-      let file_materi = $('input[type=file][name=file_materi]').val();
+      let file_materi = $('input[type=file][name=file_materi]').prop('files')[0];
       let content = editor.getData();
+      console.log(file_materi);
 
-      url = "{{ url('/subject/course/topic/content') }}"
+      let formData = new FormData();
+      formData.append('topic_id', topicId);
+      formData.append('content_id', contentId);
+      formData.append('title', title);
+      formData.append('estimation', estimation);
+      formData.append('experience', experience);
+      formData.append('content', content);
+      formData.append('file_materi', file_materi);
+
+      url = "{{ url('/subject/course/topic/content') }}";
 
       $.ajax({
-         type: "patch",
+         type: "post",
          url: url,
-         data: {
-               topic_id:topicId,
-               content_id:contentId,
-               title:title,
-               estimation:estimation,
-               experience:experience,
-               content:content,
-               file_materi:file_materi
-         },
+         data: formData,
+         processData: false,
+         contentType: false,
          beforeSend: function (response) {
-               $('#btn-save').html('<i class="fa fa-save mr-2"></i>Menyimpan ...');
+            $('#btn-save').html('<i class="fa fa-save mr-2"></i>Menyimpan ...');
          },
          success: function (response) {
-               getContents();
-               renderContent(response);
-               swal({
-                  title: "Ulasan berhasil disimpan!",
-                  text: "Terbitkan ulasan?",
-                  confirmButtonText: "Ya",
-                  confirmButtonColor: "#007bff",
-                  showCancelButton: true,
-                  cancelButtonText: "Tidak",
-                  closeOnConfirm: false,
-               }, function () {
-                     publishContent();
-               });
-               $('#btn-save').html('<i class="fa fa-save mr-2"></i>Simpan');
+            getContents();
+            renderContent(response);
+            swal({
+               title: "Ulasan berhasil disimpan!",
+               text: "Terbitkan ulasan?",
+               confirmButtonText: "Ya",
+               confirmButtonColor: "#007bff",
+               showCancelButton: true,
+               cancelButtonText: "Tidak",
+               closeOnConfirm: false,
+            }, function () {
+               publishContent();
+            });
+            $('#btn-save').html('<i class="fa fa-save mr-2"></i>Simpan');
          },
          error: function (e) {
-               swal('Gagal Memperbarui Data!')
-               $('#btn-save').html('<i class="fa fa-save mr-2"></i>Simpan');
+            swal('Gagal Memperbarui Data!');
+            $('#btn-save').html('<i class="fa fa-save mr-2"></i>Simpan');
          }
       });
    }
+
 
    function publishContent(){
       let title = $('input[type=text][name=title]').val();
       let status = $('#btn-publish').html() === '<i class="icon-cloud-upload mr-2"></i>Edit' ? 'DRAFT' : 'PUBLISHED';
       let estimation = $('input[type=number][name=estimation]').val();
       let experience = $('input[type=number][name=activity_exp]').val();
-      let file_materi = $('input[type=file][name=file_materi]').val();
+      let file_materi = $('input[type=file][name=file_materi]').prop('files')[0];
       let content = editor.getData();
 
       if ((title === '' || (estimation === '0' || estimation === '') || content === '') && status === 'PUBLISHED'){

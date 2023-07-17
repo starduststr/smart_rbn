@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ManageAccountController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\Teacher;
 use App\Http\Controllers\Student;
 use Illuminate\Support\Facades\Route;
@@ -74,6 +75,7 @@ Route::group(['middleware' => ['auth', 'role:ADMIN']], function () {
 // Teacher
 Route::group(['middleware' => ['auth', 'role:TEACHER']], function () {
     Route::post('/upload-image', [UploadController::class, 'store'])->name('upload-image');
+    Route::get('/download-materi', [DownloadController::class, 'DownloadMateri'])->name('file.download.materi');
     Route::name('teacher.')->group(function () {
 
         Route::prefix('subject')->group(function () {
@@ -86,7 +88,7 @@ Route::group(['middleware' => ['auth', 'role:TEACHER']], function () {
 
                 Route::get('/content', [Teacher\TopicController::class, 'getContent']);
                 Route::post('/content', [Teacher\TopicController::class, 'createContent']);
-                Route::patch('/content', [Teacher\TopicController::class, 'updateContent']);
+                Route::post('/content', [Teacher\TopicController::class, 'updateContent']);
                 Route::get('/contents', [Teacher\TopicController::class, 'getContents']);
 
                 Route::get('/activity', [Teacher\ActivityController::class, 'getActivity']);

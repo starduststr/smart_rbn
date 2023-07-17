@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Ramsey\Uuid\Uuid;
 
-class ContentService{
+class ContentService
+{
 
     public function index($schoolId,  $filter = [])
     {
@@ -48,7 +49,7 @@ class ContentService{
         return $content->toArray();
     }
 
-    public function create($schoolId, $topicId, $payload)
+    public function create($schoolId, $topicId, $fileMateri = null, $payload)
     {
         School::findOrFail($schoolId);
         Topic::findOrFail($topicId);
@@ -57,18 +58,27 @@ class ContentService{
         $content->id = Uuid::uuid4()->toString();
         $content->topic_id = $topicId;
         $content = $this->fill($content, $payload);
+
+        if ($fileMateri) {
+            $fileMateri->store('materi', 'public');
+            $content->file_materi = $fileMateri->getClientOriginalName();
+        }
+
         $content->save();
 
         return $content->toArray();
     }
 
-    public function update($schoolId, $topicId, $contentId, $payload)
+    public function update($schoolId, $topicId, $contentId, $namaFileMateri = null, $payload)
     {
         School::findOrFail($schoolId);
         Topic::findOrFail($topicId);
 
         $content = Content::findOrFail($contentId);
         $content = $this->fill($content, $payload);
+        if ($namaFileMateri) {
+            $content->file_materi = $namaFileMateri;
+        }
         $content->save();
 
         return $content->toArray();
@@ -88,6 +98,7 @@ class ContentService{
             'experience' => 'nullable|numeric',
             'estimation' => 'nullable|numeric',
             'status' => ['required', Rule::in(config('constant.content.status'))],
+            // 'file_materi' => 'mimes:pdf,ppt,pptx,doc,docx,xls,xlsx'
         ])->validate();
 
         return $content;

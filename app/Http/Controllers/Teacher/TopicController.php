@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\Http;
 
 class TopicController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $schoolId = Auth::user()->school_id;
         $subjectDB = new SubjectService;
         $courseDB = new CourseService;
@@ -36,7 +37,8 @@ class TopicController extends Controller
         $subject = $subjectDB->detail($schoolId, $request->subject_id);
         $course = $courseDB->detail($schoolId, $request->course_id);
         $topic = $topicDB->detail($schoolId, $request->topic_id);
-        $topics = $topicDB->index($schoolId,
+        $topics = $topicDB->index(
+            $schoolId,
             [
                 'subject_id' => $request->subject_id,
                 'course_id' => $request->course_id,
@@ -51,7 +53,8 @@ class TopicController extends Controller
     }
 
 
-    public function getContents(Request $request) {
+    public function getContents(Request $request)
+    {
         $contentDB = new ContentService;
         $schoolId = Auth::user()->school_id;
 
@@ -64,50 +67,73 @@ class TopicController extends Controller
         return response()->json($contents);
     }
 
-    public function getContent(Request $request) {
+    public function getContent(Request $request)
+    {
         $contentDB = new ContentService;
         $schoolId = Auth::user()->school_id;
 
         return response()->json($contentDB->detail(
-            $schoolId, $request->content_id
+            $schoolId,
+            $request->content_id
         ));
     }
 
-    public function createContent(Request $request) {
+    public function createContent(Request $request)
+    {
         $contentDB = new ContentService;
         $user = Auth::user();
+
+        $data = [
+            'name' => $request->name,
+            'experience' => 25,
+            'status' => Content::DRAFT,
+        ];
+
+        if ($request->file('file_materi')) {
+            $data['file_materi'] = $request->file('file_materi');
+        }
 
         return response()->json($contentDB->create(
             $user->school_id,
             $request->topic_id,
-            [
-                'name' => $request->name,
-                'experience' => 25,
-                'status' => Content::DRAFT,
-            ]
+            $request->file('file_materi'),
+            $data
         ));
     }
 
-    public function updateContent(Request $request) {
+    public function updateContent(Request $request)
+    {
         $contentDB = new ContentService;
-
         $user = Auth::user();
+
+        $data = [
+            'name' => $request->title,
+            'content' => $request->content,
+            'estimation' => $request->estimation ?? null,
+            'experience' => $request->experience ?? 20,
+            'status' => Content::DRAFT,
+        ];
+
+        // save materi
+        if ($request->hasFile('file_materi')) {
+            $fileMateri = $request->file('file_materi');
+            $fileName = $fileMateri->getClientOriginalName();
+            $fileMateri->move(public_path('materi'), $fileName);
+            $data['file_materi'] = $fileName;
+        }
 
         return response()->json($contentDB->update(
             $user->school_id,
             $request->topic_id,
             $request->content_id,
-            [
-                'name' => $request->title,
-                'content' => $request->content,
-                'estimation' => $request->estimation ?? null,
-                'experience' => $request->experience ?? 20,
-                'status' => Content::DRAFT,
-            ]
+            $data['file_materi'] ?? null,
+            $data
         ));
     }
 
-    public function publishContent(Request $request) {
+
+    public function publishContent(Request $request)
+    {
         $contentDB = new ContentService;
 
         $user = Auth::user();
@@ -116,6 +142,7 @@ class TopicController extends Controller
             $user->school_id,
             $request->topic_id,
             $request->content_id,
+            $request->file('file_name'),
             [
                 'status' => $request->status,
             ]
