@@ -75,7 +75,7 @@ Route::group(['middleware' => ['auth', 'role:ADMIN']], function () {
 // Teacher
 Route::group(['middleware' => ['auth', 'role:TEACHER']], function () {
     Route::post('/upload-image', [UploadController::class, 'store'])->name('upload-image');
-    Route::get('/download-materi', [DownloadController::class, 'DownloadMateri'])->name('file.download.materi');
+    Route::get('/download-file-materi', [DownloadController::class, 'DownloadMateri'])->name('file.download.materi');
     Route::name('teacher.')->group(function () {
 
         Route::prefix('subject')->group(function () {

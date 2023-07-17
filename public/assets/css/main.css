@@ -4390,11 +4390,11 @@ select.form-control:not([size]):not([multiple]) {
   background-color: #17191c;
 }
 
-.progress-transparent.custom-color-blue {
+.progress-transparent.custom-color-blue-2 {
   background-color: rgba(86, 138, 211, 0.2);
 }
 
-.progress-transparent.custom-color-blue .progress-bar {
+.progress-transparent.custom-color-blue-2 .progress-bar {
   background-color: #568AD3;
 }
 
