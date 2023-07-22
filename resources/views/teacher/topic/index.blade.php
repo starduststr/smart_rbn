@@ -167,7 +167,7 @@
         } else {
             $.ajax({
                 type: "post",
-                url: "{{ url('subject/course/topic/content') }}",
+                url: "{{ url('subject/course/topic/content/create') }}",
                 data: {
                     topic_id:topicId,
                     name,

@@ -87,7 +87,7 @@ Route::group(['middleware' => ['auth', 'role:TEACHER']], function () {
                 Route::post('/', [Teacher\CourseController::class, 'createCourseTopic']);
 
                 Route::get('/content', [Teacher\TopicController::class, 'getContent']);
-                Route::post('/content', [Teacher\TopicController::class, 'createContent']);
+                Route::post('/content/create', [Teacher\TopicController::class, 'createContent']);
                 Route::post('/content', [Teacher\TopicController::class, 'updateContent']);
                 Route::get('/contents', [Teacher\TopicController::class, 'getContents']);
 

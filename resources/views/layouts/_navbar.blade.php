@@ -3,7 +3,7 @@
         <div class="navbar-left">
             <div class="navbar-btn">
                 <!-- <a href="{{route('dashboard')}}">
-                    <img src="{{asset('assets/images/logo-learnifyid.svg')}}" alt="Smart School Logo" width="150px">
+                    <img src="{{asset('assets/images/ROBN.png')}}" alt="Smart School Logo" width="150px">
                 </a> -->
                     <button type="button" class="btn-toggle-offcanvas pt-md-2 pt-0"><i class="{{Auth::user()->role === "STUDENT" && Request::is('student/subject/*/course/*/topic/*/*') ? 'd-none' : 'lnr lnr-menu fa fa-bars'}}"></i></button>
             </div>

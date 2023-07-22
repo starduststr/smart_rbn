@@ -8,7 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-<link rel="icon" href="{{asset('assets/images/logo-learnifyid.svg')}}" type="image/x-icon">
+<link rel="icon" href="{{asset('assets/images/ROBN.png')}}" type="image/x-icon">
 <!-- VENDOR CSS -->
 <link rel="stylesheet" href="{{asset('assets/vendor/bootstrap/css/bootstrap.min.css')}}">
 <link rel="stylesheet" href="{{asset('assets/vendor/font-awesome/css/font-awesome.min.css')}}">
@@ -33,7 +33,7 @@
                     @include('shared.svg.login-svg')
                 </div>
                 <form class="form-auth-small my-auto" action="{{route('auth')}}" method="post">
-                    <img src="{{asset('assets/images/logo-with-name-learnifyid.svg')}}" alt="Smart School Logo" class="img-fluid">
+                    <img src="{{asset('assets/images/ROBN.png')}}" alt="Smart School Logo" class="img-fluid">
                     {{ csrf_field() }}
 
                     <p class="text-center" style="font-size: 12px;">Silahkan masukan username & password anda.</p>
